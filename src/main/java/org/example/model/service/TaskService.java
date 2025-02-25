@@ -1,6 +1,7 @@
 package org.example.model.service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.example.constatnts.TaskStatus;
 import org.example.model.Task;
@@ -41,5 +42,35 @@ public class TaskService {
 			.createdAt(entity.getCreatedAt())
 			.updatedAt(entity.getUpdatedAt())
 			.build();
+	}
+
+	public List<Task> getAll() {
+		return taskRepository.findAll()
+			.stream()
+			.map(this::entityToModel)
+			.toList();
+	}
+
+	public List<Task> getByDueDate(String dueDate) {
+		return taskRepository.findAllByDueDate(LocalDate.parse(dueDate))
+			.stream()
+			.map(this::entityToModel)
+			.toList();
+	}
+
+	public List<Task> getByTaskStatus(String status) {
+		return taskRepository.findAllByStatus(TaskStatus.valueOf(status))
+			.stream()
+			.map(this::entityToModel)
+			.toList();
+	}
+
+	public Task getOne(Long id) {
+		return entityToModel(getById(id));
+	}
+
+	private TaskEntity getById(Long id) {
+		return taskRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Task not found"));
 	}
 }
