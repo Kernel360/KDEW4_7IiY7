@@ -41,5 +41,5 @@ public class TaskEntity {
 
     @UpdateTimestamp
     @Column(insertable = false, updatable = false)
-    private Timestamp updateAt;
+    private Timestamp updatedAt;
 }
