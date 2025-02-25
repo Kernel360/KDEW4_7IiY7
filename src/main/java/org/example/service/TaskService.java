@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +33,36 @@ public class TaskService {
         return entityToObject(saved);
     }
 
+    public List<Task> getAll() {
+        return this.taskRepository.findAll().stream()
+                .map(this::entityToObject)
+                .collect(Collectors.toList());
+    }
+
+    public List<Task> getByDueDate(String dueDate) {
+        return this.taskRepository.findAllByDueDate(Date.valueOf(dueDate)).stream()
+                .map(this::entityToObject)
+                .collect(Collectors.toList());
+    }
+
+    public List<Task> getByStatus(TaskStatus status) {
+        return this.taskRepository.findAllByStatus(status).stream()
+                .map(this::entityToObject)
+                .collect(Collectors.toList());
+    }
+
+    public Task getOne(Long id) {
+        var entity = this.getById(id);
+
+        return this.entityToObject(entity);
+    }
+
+    public TaskEntity getById(Long id) {
+        return this.taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(String.format("not exists task id [%d]", id)));
+    }
+
     private Task entityToObject(TaskEntity e) {
         return Task.builder()
                 .id(e.getId())
@@ -39,7 +71,7 @@ public class TaskService {
                 .status(e.getStatus())
                 .dueDate(e.getDueDate().toString())
                 .createdAt(e.getCreatedAt().toLocalDateTime())
-                .updateAt(e.getUpdateAt().toLocalDateTime())
+                .updateAt(e.getUpdatedAt().toLocalDateTime())
                 .build();
     }
 }
