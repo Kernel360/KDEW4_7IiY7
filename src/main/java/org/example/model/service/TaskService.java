@@ -73,4 +73,32 @@ public class TaskService {
 		return taskRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Task not found"));
 	}
+
+	public Task update(Long id, String title, String description, String dueDate) {
+		var taskEntity = getById(id);
+
+		taskEntity.updateTask(title, description, LocalDate.parse(dueDate));
+		var savedTaskEntity = taskRepository.save(taskEntity);
+
+		return entityToModel(savedTaskEntity);
+	}
+
+	public Task updateStatus(Long id, String status) {
+		var taskEntity = getById(id);
+
+		taskEntity.updateStatus(TaskStatus.valueOf(status));
+		var savedTaskEntity = taskRepository.save(taskEntity);
+
+		return entityToModel(savedTaskEntity);
+	}
+
+	public boolean delete(Long id) {
+		try {
+			taskRepository.deleteById(id);
+			return true;
+		} catch (Exception e) {
+			log.error("delete failed id: {}", id);
+			return false;
+		}
+	}
 }

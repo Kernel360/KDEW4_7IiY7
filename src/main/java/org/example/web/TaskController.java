@@ -2,14 +2,18 @@ package org.example.web;
 
 import java.util.Optional;
 
+import org.example.constatnts.TaskStatus;
 import org.example.model.Task;
 import org.example.model.service.TaskService;
+import org.example.web.vo.DeleteResponse;
 import org.example.web.vo.TaskRequest;
+import org.example.web.vo.TaskStatusRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -46,6 +50,39 @@ public class TaskController {
 		return ResponseEntity.ok(taskService.getByTaskStatus(status));
 	}
 
+	@PutMapping("/{id}")
+	public ResponseEntity<?> putTask(
+		@PathVariable Long id,
+		@RequestBody TaskRequest request
+	) {
+		var result = taskService.update(id, request.title(), request.description(), request.dueDate());
+		return ResponseEntity.ok(result);
+	}
+
+	@PutMapping("/{id}/status")
+	public ResponseEntity<?> putTask(
+		@PathVariable Long id,
+		@RequestBody TaskStatusRequest request
+	) {
+
+		var result = taskService.updateStatus(id, request.taskStatus());
+		return ResponseEntity.ok(result);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<DeleteResponse> deleteTask(
+		@PathVariable Long id
+	) {
+		return ResponseEntity.ok(
+			new DeleteResponse(taskService.delete(id))
+		);
+	}
+
+	@GetMapping("/status")
+	public ResponseEntity<?> getTasksByStatus() {
+		var status = TaskStatus.values();
+		return ResponseEntity.ok(status);
+	}
 
 }
 

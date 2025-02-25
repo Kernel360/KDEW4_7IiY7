@@ -2,6 +2,7 @@ package org.example.persist.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import org.example.constatnts.TaskStatus;
 import org.hibernate.annotations.CreationTimestamp;
@@ -51,4 +52,20 @@ public class TaskEntity {
 	@CreationTimestamp
 	@Column(insertable = false, updatable = false)
 	private LocalDateTime updatedAt;
+
+	public void updateTask(String title, String description, LocalDate dueDate) {
+		if (!title.isEmpty()) {
+			this.title = title;
+		}
+		if (!description.isEmpty()) {
+			this.description = description;
+		}
+		if (Objects.nonNull(dueDate)) {
+			this.dueDate = dueDate;
+		}
+	}
+
+	public void updateStatus(TaskStatus status) {
+		this.status = status;
+	}
 }
